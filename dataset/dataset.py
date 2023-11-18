@@ -32,6 +32,7 @@ class TinyStoriesDataset(Dataset):
                 data = json.load(f)
                 text += " ".join([data_point["story"] for data_point in data])
         
+        print("hola")
         spm.SentencePieceTrainer.train(
             input=text,
             model_prefix=model_path,
