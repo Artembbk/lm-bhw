@@ -48,7 +48,7 @@ class TinyStoriesDataset(Dataset):
     def load_data(self, num_files_for_data=50):
         if os.path.exists(self.processed_data_path):
             return np.load(self.processed_data_path)
-        files = [f"data/data{str(i).zfill(2)}.json" for i in range(num_files_for_data)]
+        files = [f"{self.data_path}/data{str(i).zfill(2)}.json" for i in range(num_files_for_data)]
         res = []
         for file in tqdm(files, desc="Loading data"):
             with open(file, "r", encoding="utf-8") as f:
