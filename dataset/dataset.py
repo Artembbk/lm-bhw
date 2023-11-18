@@ -6,20 +6,20 @@ import json
 from tqdm import tqdm
 
 class TinyStoriesDataset(Dataset):
-    def __init__(self, data_path, tokenizer_model_path, processed_data_path, vocab_size=10000, model_type="unigram"):
+    def __init__(self, data_path, tokenizer_model_path, processed_data_path, vocab_size=10000, model_type="bpe", num_files=50):
         self.vocab_size = vocab_size
         self.model_type = model_type
         self.data_path = data_path
-        self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}')
+        self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}_{num_files}')
         if not os.path.exists(self.processed_data_path):
-            self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type)
+            self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type, num_files)
         self.data = self.load_data()
 
-    def load_tokenizer(self, model_path, vocab_size, model_type):
-        model_path = model_path + f"{model_type}{vocab_size}"
+    def load_tokenizer(self, model_path, vocab_size, model_type, num_files):
+        model_path = model_path + f"{model_type}{vocab_size}{num_files}"
         model_file = model_path + ".model"
         if not os.path.exists(model_file):
-            tokenizer = self.train_tokenizer(model_path, vocab_size, model_type)
+            tokenizer = self.train_tokenizer(model_path, vocab_size, model_type, num_files)
         else:
             tokenizer = spm.SentencePieceProcessor(model_file=model_path)
         return tokenizer
