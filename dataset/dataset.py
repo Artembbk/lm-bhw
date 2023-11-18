@@ -6,11 +6,12 @@ import json
 from tqdm import tqdm
 
 class TinyStoriesDataset(Dataset):
-    def __init__(self, data_path, tokenizer_model_path, vocab_size=10000, model_type="unigram"):
+    def __init__(self, data_path, tokenizer_model_path, processed_data_path, vocab_size=10000, model_type="unigram"):
         self.vocab_size = vocab_size
         self.model_type = model_type
-        self.data_path = os.path.join(data_path, f'data_{self.model_type}_{self.vocab_size}')
-        if not os.path.exists(self.data_path):
+        self.data_path = data_path
+        self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}')
+        if not os.path.exists(self.processed_data_path):
             self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type)
         self.data = self.load_data()
 
@@ -24,7 +25,7 @@ class TinyStoriesDataset(Dataset):
         return tokenizer
 
     def train_tokenizer(self, model_path, vocab_size, model_type):
-        files = [f"data/data{str(i).zfill(2)}.json" for i in range(50)]
+        files = [f"{self.data_path}/data{str(i).zfill(2)}.json" for i in range(50)]
         text = ""
         for file in tqdm(files, desc="Building tokenizer input"):
             with open(file, "r", encoding="utf-8") as f:
@@ -43,8 +44,8 @@ class TinyStoriesDataset(Dataset):
         return tokenizer
 
     def load_data(self):
-        if os.path.exists(self.data_path):
-            return torch.load(self.data_path)
+        if os.path.exists(self.processed_data_path):
+            return torch.load(self.processed_data_path)
         files = [f"data/data{str(i).zfill(2)}.json" for i in range(50)]
         data = []
         for file in tqdm(files, desc="Loading data"):
@@ -54,7 +55,7 @@ class TinyStoriesDataset(Dataset):
                 data.append(torch.tensor(story, dtype=torch.long))
 
         data = torch.cat(data)
-        torch.save(data, os.path.join(self.data_path, f'data_{self.model_type}_{self.vocab_size}'))
+        torch.save(data, self.processed_data_path)
 
         return data
 
