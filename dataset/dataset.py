@@ -26,15 +26,17 @@ class TinyStoriesDataset(Dataset):
 
     def train_tokenizer(self, model_path, vocab_size, model_type):
         files = [f"{self.data_path}/data{str(i).zfill(2)}.json" for i in range(50)]
-        text = ""
-        for file in tqdm(files, desc="Building tokenizer input"):
-            with open(file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                text += " ".join([data_point["story"] for data_point in data])
-        
+        with open("tmp.txt", "w") as out:
+            for file in tqdm(files, desc="Building tokenizer input"):
+                with open(file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    out.write(" ".join([data_point["story"] for data_point in data]))
+                    out.write("\n")
+
         print("hola")
+        
         spm.SentencePieceTrainer.train(
-            input=text,
+            input="tmp.txt",
             model_prefix=model_path,
             vocab_size=vocab_size,
             model_type=model_type,
