@@ -12,8 +12,7 @@ class TinyStoriesDataset(Dataset):
         self.model_type = model_type
         self.data_path = data_path
         self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}_{num_files_for_tokenizer}.npy')
-        if not os.path.exists(self.processed_data_path):
-            self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type, num_files_for_tokenizer)
+        self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type, num_files_for_tokenizer)
         self.data = self.load_data(num_files_for_data)
 
     def load_tokenizer(self, model_path, vocab_size, model_type, num_files_for_tokenizer):
