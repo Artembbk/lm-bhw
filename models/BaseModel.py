@@ -37,7 +37,9 @@ class PrenormTransformerEncoder(nn.Module):
         look_ahead_mask = look_ahead_mask.to(src.device)
 
         for layer in self.layers:
+            
             src = layer(src, look_ahead_mask, padding_mask)
+            print("layer", src)
         return src
     
 class PositionalEncoding(nn.Module):

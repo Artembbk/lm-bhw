@@ -73,6 +73,12 @@ class Trainer():
             
             self.scheduler.step()
                 
+
+            if step % 100 == 0:  # Логгирование каждые 100 шагов
+                for name, param in self.model.named_parameters():
+                    wandb.log({f"Model Parameter {name}": param.clone().cpu().detach().numpy()})
+    
+
             step += 1
 
         wandb.finish() 
