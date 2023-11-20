@@ -4,7 +4,8 @@ import wandb
 
 class Trainer():
     def __init__(self, model, optimizer, scheduler, train_dataloader, val_dataloader, total_steps, validate_every, save_checkpoint_every):
-        self.model = model
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
+        self.model = model.to(self.device)
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.criterion = nn.CrossEntropyLoss()
@@ -13,7 +14,7 @@ class Trainer():
         self.total_steps = total_steps
         self.validate_every = validate_every
         self.save_checkpoint_every = save_checkpoint_every
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
+        
 
     def train_step(self, inputs, lengths):
         inputs = inputs.to(self.device)

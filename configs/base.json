@@ -12,17 +12,18 @@
     },
     "dataloaders": {
         "train": {
-            "batch_size": 64,
+            "batch_size": 100,
             "shuffle": true,
             "num_workers": 2
         },
         "val": {
-            "batch_size": 64,
+            "batch_size": 100,
             "shuffle": false,
             "num_workers": 2
+            
         }
     },
-    "val_size": 2000,
+    "val_size": 200,
     "model": {
         "name": "BaseModel",
         "args": {
@@ -41,13 +42,13 @@
     "scheduler": {
         "name": "CosineAnnealingLR",
         "args": {
-            "T_max": 4900000
+            "T_max": 10000
         }
     }, 
 
     "training_args": {
-        "total_steps": 4900000,
-        "validate_every": 16384,
-        "save_checkpoint_every": 81920
+        "total_steps": 10000,
+        "validate_every": 1000,
+        "save_checkpoint_every": 2000
     }
 }
