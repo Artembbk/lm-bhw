@@ -1,0 +1,53 @@
+{
+    "name": "base",
+    "architecture": "PreNormTransformerDecoder",
+    "dataset": {
+        "data_path": "",
+        "processed_data_path": "/kaggle/input/tinystories-orig/",
+        "tokenizer_path": "/kaggle/working/lmbhw/trained_tokenizers/",
+        "vocab_size": 10000,
+        "model_type": "bpe",
+        "num_files_for_tokenizer": 10,
+        "num_files_for_data": 50
+    },
+    "dataloaders": {
+        "train": {
+            "batch_size": 64,
+            "shuffle": true,
+            "num_workers": 2
+        },
+        "val": {
+            "batch_size": 64,
+            "shuffle": false,
+            "num_workers": 2
+        }
+    },
+    "val_size": 2000,
+    "model": {
+        "name": "BaseModel",
+        "args": {
+            "d_model": 512,
+            "nhead": 8,
+            "num_layers": 6
+        }
+    },
+    "optimizer": {
+        "name": "Adam",
+        "args": {
+            "lr": 1e-4
+        }
+    },
+
+    "scheduler": {
+        "name": "CosineAnnealingLR",
+        "args": {
+            "T_max": 10000
+        }
+    }, 
+
+    "training_args": {
+        "total_steps": 10000,
+        "validate_every": 1000,
+        "save_checkpoint_every": 500
+    }
+}

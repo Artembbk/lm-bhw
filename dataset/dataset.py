@@ -14,6 +14,7 @@ class TinyStoriesDataset(Dataset):
         self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}_{num_files_for_tokenizer}.npy')
         self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type, num_files_for_tokenizer)
         self.data = self.load_data(num_files_for_data)
+        self.lengths = self.get_lengths()
 
     def load_tokenizer(self, model_path, vocab_size, model_type, num_files_for_tokenizer):
         model_path = model_path + f"{model_type}{vocab_size}{num_files_for_tokenizer}"
@@ -65,10 +66,15 @@ class TinyStoriesDataset(Dataset):
         np.save(self.processed_data_path, res)
 
         return res
+    
+    def get_lengths(self):
+        lengths = np.where(self.data == 5)[1] + 1
+        return np.clip(lengths, None, 254)
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
         tokens = self.data[idx]
-        return tokens
+        length = self.lengths[idx]
+        return tokens, length
