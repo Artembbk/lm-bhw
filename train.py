@@ -47,7 +47,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     with open(args.config) as f:
-        config = json.dump(f)
+        config = json.load(f)
 
     main(config)
 
