@@ -35,7 +35,7 @@ class PrenormTransformerEncoder(nn.Module):
         
         mask = torch.arange(max_length).expand(len(src), max_length) >= lengths.unsqueeze(1)
         padding_mask = mask.to(src.device)
-        look_ahead_mask = ~torch.triu(torch.ones(max_length, max_length)).unsqueeze(0).bool()
+        look_ahead_mask = ~torch.triu(torch.ones(max_length, max_length)).bool()
         look_ahead_mask = look_ahead_mask.to(src.device)
 
         for layer in self.layers:
