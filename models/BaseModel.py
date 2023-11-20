@@ -70,7 +70,11 @@ class BaseModel(nn.Module):
 
     def forward(self, x, lengths):
         embedded = self.embedding(x)
+        print("embedded:", embedded)
         embedded_with_position = self.positional_encoding(embedded)
+        print("pe", embedded_with_position)
         encoded = self.transformer_encoder(embedded_with_position, lengths)
+        print("encoded",  encoded)
         next_token_prediction = self.linear(encoded)
+        print("next", next_token_prediction)
         return next_token_prediction
