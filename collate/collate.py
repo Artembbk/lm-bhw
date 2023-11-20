@@ -2,10 +2,7 @@ import numpy as np
 import torch
 
 def collate_fn(data):
-    print(data)
-    arrays, lengths = data
-    tensor_list = [torch.from_numpy(arr).to(torch.long) for arr in arrays]
+    sequences = torch.stack([torch.from_numpy(pair[0]) for pair in data])
+    lengths = torch.tensor([pair[1] for pair in data])
+    return sequences, lengths
 
-    lengths_tensor = torch.tensor(lengths, dtype=torch.long)
-    
-    return tensor_list, lengths_tensor
