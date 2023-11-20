@@ -17,7 +17,7 @@ class PrenormTransformerEncoderLayer(nn.Module):
         print("src1", src2.shape)
         print("attn_mask", attn_mask)
         print("key_padding_mask", key_padding_mask)
-        src2, _ = self.self_attn(src2, src2, src2, key_padding_mask=key_padding_mask)
+        src2, _ = self.self_attn(src2, src2, src2, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
         print("src2", src2)
         print("src2.shape", src2.shape)
         src = src + self.dropout1(src2)
@@ -38,7 +38,7 @@ class PrenormTransformerEncoder(nn.Module):
         
         mask = torch.arange(max_length).expand(len(src), max_length) >= lengths.unsqueeze(1)
         padding_mask = mask.to(src.device)
-        look_ahead_mask = ~torch.triu(torch.ones(max_length, max_length)).bool()
+        look_ahead_mask = torch.tril(torch.ones(max_length, max_length)).bool()
         look_ahead_mask = look_ahead_mask.to(src.device)
 
         for layer in self.layers:
