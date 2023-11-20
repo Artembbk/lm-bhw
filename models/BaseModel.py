@@ -14,12 +14,18 @@ class PrenormTransformerEncoderLayer(nn.Module):
 
     def forward(self, src, attn_mask=None, key_padding_mask=None):
         src2 = self.norm1(src)
+        print("src1", src2)
         src2, _ = self.self_attn(src2, src2, src2, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
+        print("src2", src2)
         src = src + self.dropout1(src2)
+        print("src3", src)
 
         src2 = self.norm2(src)
+        print("src4", src2)
         src2 = self.linear2(torch.relu(self.linear1(src2)))
+        print("src5", src2)
         src = src + self.dropout2(src2)
+        print("src6", src)
 
         return src
 
