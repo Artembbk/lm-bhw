@@ -7,12 +7,12 @@ import numpy as np
 from tqdm import tqdm
 
 class TinyStoriesDataset(Dataset):
-    def __init__(self, data_path, tokenizer_model_path, processed_data_path, vocab_size=10000, model_type="bpe", num_files_for_tokenizer=50, num_files_for_data=50):
+    def __init__(self, data_path, tokenizer_path, processed_data_path, vocab_size=10000, model_type="bpe", num_files_for_tokenizer=50, num_files_for_data=50):
         self.vocab_size = vocab_size
         self.model_type = model_type
         self.data_path = data_path
         self.processed_data_path = os.path.join(processed_data_path, f'data_{self.model_type}_{self.vocab_size}_{num_files_for_tokenizer}.npy')
-        self.tokenizer = self.load_tokenizer(tokenizer_model_path, vocab_size, model_type, num_files_for_tokenizer)
+        self.tokenizer = self.load_tokenizer(tokenizer_path, vocab_size, model_type, num_files_for_tokenizer)
         self.data = self.load_data(num_files_for_data)
         self.lengths = self.get_lengths()
 
