@@ -26,9 +26,9 @@
     "model": {
         "name": "BaseModel",
         "args": {
-            "d_model": 512,
+            "d_model": 256,
             "nhead": 8,
-            "num_layers": 6
+            "num_layers": 1
         }
     },
     "optimizer": {
@@ -41,13 +41,13 @@
     "scheduler": {
         "name": "CosineAnnealingLR",
         "args": {
-            "T_max": 10000
+            "T_max": 4900000
         }
     }, 
 
     "training_args": {
-        "total_steps": 10000,
-        "validate_every": 1000,
-        "save_checkpoint_every": 500
+        "total_steps": 4900000,
+        "validate_every": 16384,
+        "save_checkpoint_every": 81920
     }
 }
