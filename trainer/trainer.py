@@ -39,6 +39,7 @@ class Trainer():
                 inputs = inputs.to(self.device)
                 
                 logits = self.model(inputs[:, :-1], lengths)
+                print(logits)
                 loss = self.criterion(logits.reshape(-1, logits.shape[-1]), inputs[:, 1:].reshape(-1,))
                 
                 total_loss += loss.item() * inputs.size(0)
