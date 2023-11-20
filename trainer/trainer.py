@@ -19,7 +19,7 @@ class Trainer():
         inputs = inputs.to(self.device)
         
         self.optimizer.zero_grad()
-        logits = self.model(inputs[:, :-1])
+        logits = self.model(inputs[:, :-1], lengths)
         
         loss = self.criterion(logits, inputs[:, 1:])
         loss.backward()
