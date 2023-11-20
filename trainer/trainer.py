@@ -20,6 +20,7 @@ class Trainer():
         
         self.optimizer.zero_grad()
         logits = self.model(inputs[:, :-1], lengths)
+        print(logits.shape)
         
         loss = self.criterion(logits, inputs[:, 1:])
         loss.backward()
