@@ -14,12 +14,7 @@ class PrenormTransformerEncoderLayer(nn.Module):
 
     def forward(self, src, attn_mask=None, key_padding_mask=None):
         src2 = self.norm1(src)
-        print("src1", src2.shape)
-        print("attn_mask", attn_mask)
-        print("key_padding_mask", key_padding_mask)
         src2, _ = self.self_attn(src2, src2, src2, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
-        print("src2", src2)
-        print("src2.shape", src2.shape)
         src = src + self.dropout1(src2)
 
         src2 = self.norm2(src)
