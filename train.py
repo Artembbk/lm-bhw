@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from trainer.trainer import Trainer
 
 def initialize_class(class_name, args):
-    module_name = f"models.{class_name.lower()}"
+    module_name = f"models.{class_name}"
     module = importlib.import_module(module_name)
     class_ = getattr(module, class_name)
     instance = class_(**args)
