@@ -49,6 +49,7 @@ class Trainer():
     
     def train(self):
         # Настройка WandB
+        wandb.init(project='bhw-llm-tiny')
         wandb.watch(self.model)
 
         # Обучение
