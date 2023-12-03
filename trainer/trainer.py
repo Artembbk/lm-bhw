@@ -75,7 +75,7 @@ class Trainer():
 
                 wandb.log({"Validation Loss": val_loss})
                 wandb.log({"Validation Perplexity": val_perpl})
-                self.log_predicitions(10)
+                self.log_predictions(10)
             
             if step % self.save_checkpoint_every == 0:
                 torch.save(self.model.state_dict(), f"checkpoint_{step}.pt")
