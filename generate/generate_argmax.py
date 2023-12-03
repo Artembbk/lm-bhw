@@ -2,7 +2,7 @@ import torch
 from torch import Tensor
 
 @torch.no_grad()
-def generate_argmax(self, model, tokenizer, device, batch_size: int, prefix: Tensor = None, max_len=100):
+def generate_argmax(model, tokenizer, device, batch_size: int, prefix: Tensor = None, max_len=100):
     """
     Samples output sequence from probability distribution obtained by model.
     if Tensor of prefix is None then full it with [BOS] token
