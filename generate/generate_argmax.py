@@ -1,5 +1,6 @@
 import torch
 from torch import Tensor
+from torch.nn import functional as F
 
 @torch.no_grad()
 def generate_argmax(model, tokenizer, device, batch_size: int, prefix: Tensor = None, max_len=100):
@@ -23,7 +24,10 @@ def generate_argmax(model, tokenizer, device, batch_size: int, prefix: Tensor = 
         prefix[:, :] = tokenizer.token_to_id("[BOS]")
     
     while prefix.size(1) < max_len:
-        inds = model.get_next_token(prefix).argmax(1, keepdim=True)
+        logits = model(prefix)
+        logits = logits[:, -1, :].squeeze(1)
+        probs = F.softmax(logits, dim=-1)
+        inds = probs.argmax(1, keepdim=True)
         prefix = torch.cat((prefix, inds), dim=1)
         
     end = torch.empty((batch_size, 1), dtype=torch.int32).to(device)
