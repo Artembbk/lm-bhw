@@ -12,6 +12,9 @@ def perplexity(input_ix, logits, mask):
     """
     logits = logits[:, :-1, :]  # Remove the last token predictions
 
+    print(logits.shape)
+    print(input_ix.shape)
+
     # Flatten the logits and input_ix
     logits = logits.contiguous().view(-1, logits.size(-1))
     flat_input_ix = input_ix[:, 1:].contiguous().view(-1)  # Remove the first token (EOS) and flatten
