@@ -49,6 +49,6 @@
     "training_args": {
         "total_steps": 10000,
         "validate_every": 1000,
-        "save_checkpoint_every": 2000
+        "save_checkpoint_every": 1000
     }
 }

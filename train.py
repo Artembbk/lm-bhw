@@ -17,6 +17,7 @@ def initialize_class(class_name, args):
 
 def main(config):
     dataset = TinyStoriesDataset(**config['dataset'])
+    tokenizer = dataset.tokenizer
     val_size = config['val_size']
     train_size = len(dataset) - val_size
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
@@ -34,7 +35,7 @@ def main(config):
     scheduler_cls = getattr(torch.optim.lr_scheduler, config['scheduler']['name'])
     scheduler = scheduler_cls(optimizer, **config['scheduler']['args'])
 
-    trainer = Trainer(model, optimizer, scheduler, train_dataloader, val_dataloader, **config['training_args'])
+    trainer = Trainer(model, tokenizer, optimizer, scheduler, train_dataloader, val_dataloader, **config['training_args'])
     trainer.train()
     
 
