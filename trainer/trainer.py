@@ -28,7 +28,7 @@ class Trainer():
         if train:
             self.optimizer.zero_grad()
         logits = self.model(inputs[:, :-1], lengths)
-        perpl = perplexity(inputs, logits, create_non_special_mask(lengths, 256))
+        perpl = perplexity(inputs, logits, create_non_special_mask(lengths, 256).to(self.device))
         
         loss = self.criterion(logits.reshape(-1, logits.shape[-1]), inputs[:, 1:].reshape(-1,))
         if train:
