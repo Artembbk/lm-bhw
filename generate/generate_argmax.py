@@ -32,6 +32,6 @@ def generate_argmax(model, tokenizer, device, batch_size: int, prefix: Tensor = 
         prefix = torch.cat((prefix, inds), dim=1)
         
     end = torch.empty((batch_size, 1), dtype=torch.int32).to(device)
-    end[:, :] = tokenizer.token_to_id("[EOS]")
+    end[:, :] = tokenizer.piece_to_id("[EOS]")
     prefix = torch.cat((prefix, end), dim=1)
     return prefix
