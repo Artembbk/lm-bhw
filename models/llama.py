@@ -101,9 +101,9 @@ class PositionalEncoding(nn.Module):
         x = x + self.positional_encoding[:, :x.size(1)].detach()
         return x
 
-class BaseModel(nn.Module):
+class llama(nn.Module):
     def __init__(self, vocab_size=10000, d_model=512, nhead=8, num_layers=6, dropout=0.1):
-        super(BaseModel, self).__init__()
+        super(llama, self).__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
         self.positional_encoding = PositionalEncoding(d_model)
         self.dropout = nn.Dropout(dropout)
