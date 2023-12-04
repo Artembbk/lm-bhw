@@ -23,27 +23,26 @@ class SwiGLU(torch.nn.Module):
         output = swish_result * xV_plus_c
         return output
 
+
 class RMSNorm(nn.Module):
-    def __init__(self, num_features, epsilon=1e-8):
+    def __init__(self, d):
         super(RMSNorm, self).__init__()
-        self.num_features = num_features
-        self.epsilon = epsilon
-        self.gamma.data = nn.Parameter(torch.ones(1, self.num_features))
-        self.beta.data = nn.Parameter(torch.zeros(1, self.num_features))
-        self.register_buffer('initialized', torch.tensor(0))
+
+        self.d = d
+
+        self.scale = nn.Parameter(torch.ones(d))
+        self.register_parameter("scale", self.scale)
+
+        self.offset = nn.Parameter(torch.zeros(d))
+        self.register_parameter("offset", self.offset)
 
     def forward(self, x):
-        if not self.initialized:
-            self.initialize_parameters(x)
-        mean = x.mean(dim=1, keepdim=True)
-        variance = (x - mean).pow(2).mean(dim=1, keepdim=True)
-        x = (x - mean) * torch.rsqrt(variance + self.epsilon)
-        x = self.gamma * x + self.beta
-        return x
+        norm_x = x.norm(2, dim=-1, keepdim=True)
+        d_x = self.d
+        rms_x = norm_x * d_x ** (-1. / 2)
+        x_normed = x / (rms_x + self.eps)
+        return self.scale * x_normed + self.offset
 
-    def initialize_parameters(self, x):
-        self.gamma.data = torch.std(x, dim=1)
-        self.initialized = torch.tensor(1)
 
 class PrenormTransformerEncoderLayer(nn.Module):
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1, beta=1.0):
