@@ -39,6 +39,7 @@ def generate_nucleus(model, tokenizer, device, batch_size: int, prefix: Tensor =
         
         # Select from reduced distribution
         next_token = selected_indices[0] if selected_indices.numel() == 1 else torch.multinomial(torch.ones_like(probs), 1)
+        print(next_token)
         prefix = torch.cat([prefix, next_token], dim=-1)
         
     end = torch.empty((batch_size, 1), dtype=torch.int32).to(device)
