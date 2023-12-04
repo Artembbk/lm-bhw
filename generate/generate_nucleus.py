@@ -29,9 +29,10 @@ def generate_nucleus(model, tokenizer, device, batch_size: int, prefix: Tensor =
         logits = logits[:, -1, :].squeeze(1)
         probs = F.softmax(logits, dim=-1)
         sorted_probs, sorted_inds = torch.sort(probs, descending=True, dim=-1)
+        print(sorted_inds.shape)
         cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
         below_nucleus = cumulative_probs < nucleus
-        
+        print(below_nucleus.shape)
         if not below_nucleus.any():
             break
             
