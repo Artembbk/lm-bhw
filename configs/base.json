@@ -12,45 +12,48 @@
     },
     "dataloaders": {
         "train": {
-            "batch_size": 20,
+            "batch_size": 100,
             "shuffle": true,
             "num_workers": 2
         },
         "val": {
-            "batch_size": 20,
+            "batch_size": 100,
             "shuffle": false,
             "num_workers": 2
             
         }
     },
-    "val_size": 20,
-    "train_size": 20,
+    "val_size": 1000,
+    "train_size": 4966000,
     "model": {
         "name": "llama",
         "args": {
-            "d_model": 256,
+            "d_model": 1024,
             "nhead": 8,
-            "num_layers": 1
+            "num_layers": 4
         }
     },
     "optimizer": {
-        "name": "Adam",
+        "name": "AdamW",
         "args": {
-            "lr": 1e-4
+            "lr": 3e-4,
+            "betas": [0.9, 0.95],
+            "weight_decay": 0.1
         }
     },
 
     "scheduler": {
         "name": "CosineAnnealingLR",
         "args": {
-            "T_max": 10000
+            "T_max": 49660,
+            "eta_min": 3e-4
         }
     }, 
 
     "training_args": {
-        "total_steps": 10000,
+        "total_steps": 49660,
         "validate_every": 1000,
         "save_checkpoint_every": 1000,
-        "epochs": 10000
+        "epochs": 1
     }
 }
