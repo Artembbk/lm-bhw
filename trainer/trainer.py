@@ -9,7 +9,7 @@ from generate import generate_argmax, generate_nucleus
 import pandas as pd
 from tqdm import tqdm
 class Trainer():
-    def __init__(self, model, tokenizer, optimizer, scheduler, train_dataloader, val_dataloader, total_steps, validate_every, save_checkpoint_every):
+    def __init__(self, model, tokenizer, optimizer, scheduler, train_dataloader, val_dataloader, total_steps, validate_every, save_checkpoint_every, epochs):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
         self.model = model.to(self.device)
         self.optimizer = optimizer
@@ -20,6 +20,7 @@ class Trainer():
         self.total_steps = total_steps
         self.validate_every = validate_every
         self.save_checkpoint_every = save_checkpoint_every
+        self.epochs = epochs
         self.tokenizer = tokenizer
 
     def step(self, inputs, lengths, train):
@@ -68,30 +69,30 @@ class Trainer():
         # Обучение
         self.model.train()
         step = 0
+        for epoch in range(self.epochs):
+            for inputs, lengths in tqdm(self.train_dataloader):
+                if step >= self.total_steps:
+                    break
+                
+                loss, perpl = self.step(inputs, lengths, True)
+                
+                if step % self.validate_every == 0:
+                    val_loss, val_perpl = self.validate()
 
-        for inputs, lengths in tqdm(self.train_dataloader):
-            if step >= self.total_steps:
-                break
-            
-            loss, perpl = self.step(inputs, lengths, True)
-            
-            if step % self.validate_every == 0:
-                val_loss, val_perpl = self.validate()
+                    wandb.log({"Validation Loss": val_loss})
+                    wandb.log({"Validation Perplexity": val_perpl})
+                    self.log_predictions(10)
+                
+                if step % self.save_checkpoint_every == 0:
+                    torch.save(self.model.state_dict(), f"checkpoint_{step}.pt")
 
-                wandb.log({"Validation Loss": val_loss})
-                wandb.log({"Validation Perplexity": val_perpl})
-                self.log_predictions(10)
-            
-            if step % self.save_checkpoint_every == 0:
-                torch.save(self.model.state_dict(), f"checkpoint_{step}.pt")
+                if step % 50 == 0:  # Логгирование каждые 50 шагов
+                    wandb.log({"Training Loss": loss})
+                    wandb.log({"Training Perplexity": perpl})
+                    for name, param in self.model.named_parameters():
+                        wandb.log({f"Model Parameter {name}": param.clone().cpu().detach().numpy()})
 
-            if step % 100 == 0:  # Логгирование каждые 100 шагов
-                wandb.log({"Training Loss": loss})
-                wandb.log({"Training Perplexity": perpl})
-                for name, param in self.model.named_parameters():
-                    wandb.log({f"Model Parameter {name}": param.clone().cpu().detach().numpy()})
-
-            step += 1
+                step += 1
 
         wandb.finish() 
 
