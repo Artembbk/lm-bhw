@@ -68,8 +68,8 @@ class TinyStoriesDataset(Dataset):
         return res
     
     def get_lengths(self):
-        lengths = np.where(self.data == 5)[1] - 1
-        return 256 - lengths
+        lengths = np.where(self.data == 5)[1] + 1
+        return lengths
 
     def __len__(self):
         return len(self.data)
