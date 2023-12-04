@@ -36,6 +36,7 @@ def generate_nucleus(model, tokenizer, device, batch_size: int, prefix: Tensor =
             break
             
         selected_indices = sorted_inds[below_nucleus]
+        print(selected_indices)
         
         selected_probs = probs[:, selected_indices]
         selected_probs_normalized = selected_probs / selected_probs.sum(dim=1, keepdim=True)
