@@ -27,16 +27,21 @@ class Trainer():
         
         if train:
             self.optimizer.zero_grad()
-        logits = self.model(inputs[:, :-1], lengths)
-        perpl = perplexity(inputs, logits, create_non_special_mask(lengths, 256).to(self.device))
-        
-        loss = self.criterion(logits.reshape(-1, logits.shape[-1]), inputs[:, 1:].reshape(-1,))
+        logits = self.model(inputs, lengths)
+        mask = torch.arange(logits.size(1)).expand(len(logits), logits.size(1)) < lengths.unsqueeze(1)
+        mask = mask.to(self.device)
+        perpl = perplexity(inputs, logits, mask)
+        loss = self.criterion(logits[:, :-1, :].reshape(-1, logits.shape[-1]), inputs[:, 1:].reshape(-1,))
+        loss = loss * mask[:, 1:].contiguous().view(-1).float() 
+        total_loss = loss.sum()
+        total_non_eos = mask[:, 1:].sum()
+        total_loss = total_loss / total_non_eos
         if train:
-            loss.backward()
+            total_loss.backward()
             self.optimizer.step()
             self.scheduler.step()
         
-        return loss.item(), perpl
+        return total_loss.item(), perpl
 
     def validate(self):
         self.model.eval()

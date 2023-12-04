@@ -10,7 +10,7 @@ def perplexity(input_ix, logits, mask):
     
     :returns: scalar perplexity, mean perplexity over non-eos tokens
     """
-
+    logits = logits[:, :-1, :]
     # Flatten the logits and input_ix
     logits = logits.contiguous().view(-1, logits.size(-1))
     flat_input_ix = input_ix[:, 1:].contiguous().view(-1)  # Remove the first token (EOS) and flatten
