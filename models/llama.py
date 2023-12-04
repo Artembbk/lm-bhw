@@ -28,8 +28,8 @@ class RMSNorm(nn.Module):
         super(RMSNorm, self).__init__()
         self.num_features = num_features
         self.epsilon = epsilon
-        self.gamma = nn.Parameter(torch.ones(num_features))
-        self.beta = nn.Parameter(torch.zeros(num_features))
+        self.gamma.data = nn.Parameter(torch.ones(1, self.num_features))
+        self.beta.data = nn.Parameter(torch.zeros(1, self.num_features))
         self.register_buffer('initialized', torch.tensor(0))
 
     def forward(self, x):
@@ -38,9 +38,6 @@ class RMSNorm(nn.Module):
         mean = x.mean(dim=1, keepdim=True)
         variance = (x - mean).pow(2).mean(dim=1, keepdim=True)
         x = (x - mean) * torch.rsqrt(variance + self.epsilon)
-        print(self.gamma.shape)
-        print(x.shape)
-        print(self.beta.shape)
         x = self.gamma * x + self.beta
         return x
 
