@@ -5,7 +5,7 @@ import wandb
 from torch.nn import functional as F
 from metrics import perplexity
 from utils import create_non_special_mask
-from generate import generate_argmax, generate_nucleus
+from generate import generate_argmax
 import pandas as pd
 from tqdm import tqdm
 class Trainer():
