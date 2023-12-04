@@ -24,7 +24,7 @@ def generate_nucleus(model, tokenizer, device, batch_size: int, prefix: Tensor =
         prefix[:, :] = tokenizer.token_to_id("[BOS]")
     
     while prefix.size(1) < max_len:
-        lengths = torch.full((batch_size,), prefix.size(1), device=device)
+        lengths = torch.full((batch_size,), prefix.size(1))
         logits = model(prefix, lengths)
         logits = logits[:, -1, :].squeeze(1)
         probs = F.softmax(logits, dim=-1)
