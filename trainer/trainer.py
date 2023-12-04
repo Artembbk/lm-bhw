@@ -100,10 +100,6 @@ class Trainer():
         inputs, _ = next(iter(self.val_dataloader))
         inputs = inputs[:num, :2].to(self.device)
         argmax_text = self.tokenizer.decode(generate_argmax(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=16).cpu().numpy().tolist())
-        nucleus_text = self.tokenizer.decode(generate_nucleus(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=16).cpu().numpy().tolist())
         data = {'Texts': argmax_text}
         df = pd.DataFrame(data)
         wandb.log({"Argamx Texts": wandb.Table(dataframe=df)})
-        data = {'Texts': nucleus_text}
-        df = pd.DataFrame(data)
-        wandb.log({"Nucleus Texts": wandb.Table(dataframe=df)})
