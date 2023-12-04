@@ -40,7 +40,7 @@ class RMSNorm(nn.Module):
         norm_x = x.norm(2, dim=-1, keepdim=True)
         d_x = self.d
         rms_x = norm_x * d_x ** (-1. / 2)
-        x_normed = x / (rms_x + self.eps)
+        x_normed = x / (rms_x + 1e-8)
         return self.scale * x_normed + self.offset
 
 
