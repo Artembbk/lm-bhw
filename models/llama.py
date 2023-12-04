@@ -38,6 +38,9 @@ class RMSNorm(nn.Module):
         mean = x.mean(dim=1, keepdim=True)
         variance = (x - mean).pow(2).mean(dim=1, keepdim=True)
         x = (x - mean) * torch.rsqrt(variance + self.epsilon)
+        print(self.gamma.shape)
+        print(x.shape)
+        print(self.beta.shape)
         x = self.gamma * x + self.beta
         return x
 
