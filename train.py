@@ -19,8 +19,9 @@ def main(config):
     dataset = TinyStoriesDataset(**config['dataset'])
     tokenizer = dataset.tokenizer
     val_size = config['val_size']
-    train_size = len(dataset) - val_size
-    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+    train_size = config['train_size']
+    other_size = len(dataset) - val_size - train_size
+    train_dataset, val_dataset, _ = torch.utils.data.random_split(dataset, [train_size, val_size, other_size])
     
     train_dataloader = DataLoader(train_dataset,collate_fn=collate_fn, pin_memory=True, **config['dataloaders']["train"])
     val_dataloader = DataLoader(val_dataset,collate_fn=collate_fn, pin_memory=True, **config['dataloaders']["val"])

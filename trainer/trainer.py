@@ -7,7 +7,7 @@ from metrics import perplexity
 from utils import create_non_special_mask
 from generate import generate_argmax, generate_nucleus
 import pandas as pd
-
+from tqdm import tqdm
 class Trainer():
     def __init__(self, model, tokenizer, optimizer, scheduler, train_dataloader, val_dataloader, total_steps, validate_every, save_checkpoint_every):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
@@ -69,7 +69,7 @@ class Trainer():
         self.model.train()
         step = 0
 
-        for inputs, lengths in self.train_dataloader:
+        for inputs, lengths in tqdm(self.train_dataloader):
             if step >= self.total_steps:
                 break
             
