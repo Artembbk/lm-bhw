@@ -43,14 +43,14 @@
     "scheduler": {
         "name": "CosineAnnealingLR",
         "args": {
-            "T_max": 1000
+            "T_max": 10000
         }
     }, 
 
     "training_args": {
-        "total_steps": 1000,
-        "validate_every": 100,
-        "save_checkpoint_every": 100,
-        "epochs": 1000
+        "total_steps": 10000,
+        "validate_every": 1000,
+        "save_checkpoint_every": 1000,
+        "epochs": 10000
     }
 }
