@@ -97,7 +97,7 @@ class Trainer():
 
     def log_predictions(self, num):
         inputs, _ = next(iter(self.val_dataloader))
-        inputs = inputs[:num, :2]
+        inputs = inputs[:num, :2].to(self.device)
         argmax_text = self.tokenizer.decode(generate_argmax(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=16).cpu().numpy())
         nucleus_text = self.tokenizer.decode(generate_nucleus(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=16).cpu().numpy())
         data = {'Texts': argmax_text}
