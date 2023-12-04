@@ -1,14 +1,57 @@
 import torch
 import torch.nn as nn
 
+class SwishBeta(torch.nn.Module):
+    def __init__(self, beta=1.0):
+        super(SwishBeta, self).__init__()
+        self.beta = beta
+
+    def forward(self, x):
+        return x * torch.sigmoid(self.beta * x)
+
+class SwiGLU(torch.nn.Module):
+    def __init__(self, input_dim, output_dim, beta=1.0):
+        super(SwiGLU, self).__init__()
+        self.W = torch.nn.Linear(input_dim, output_dim)
+        self.V = torch.nn.Linear(input_dim, output_dim)
+        self.swish = SwishBeta(beta)
+
+    def forward(self, x):
+        xW_plus_b = self.W(x) 
+        xV_plus_c = self.V(x) 
+        swish_result = self.swish(xW_plus_b)
+        output = swish_result * xV_plus_c
+        return output
+
+class RMSNorm(nn.Module):
+    def __init__(self, num_features, epsilon=1e-8):
+        super(RMSNorm, self).__init__()
+        self.num_features = num_features
+        self.epsilon = epsilon
+        self.gamma = nn.Parameter(torch.ones(num_features))
+        self.beta = nn.Parameter(torch.zeros(num_features))
+        self.register_buffer('initialized', torch.tensor(0))
+
+    def forward(self, x):
+        if not self.initialized:
+            self.initialize_parameters(x)
+        mean = x.mean(dim=1, keepdim=True)
+        variance = (x - mean).pow(2).mean(dim=1, keepdim=True)
+        x = (x - mean) * torch.rsqrt(variance + self.epsilon)
+        x = self.gamma * x + self.beta
+        return x
+
+    def initialize_parameters(self, x):
+        self.gamma.data = torch.std(x, dim=1)
+        self.initialized = torch.tensor(1)
+
 class PrenormTransformerEncoderLayer(nn.Module):
-    def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1):
+    def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1, beta=1.0):
         super(PrenormTransformerEncoderLayer, self).__init__()
         self.self_attn = nn.MultiheadAttention(d_model, nhead, batch_first=True)
-        self.linear1 = nn.Linear(d_model, dim_feedforward)
-        self.linear2 = nn.Linear(dim_feedforward, d_model)
-        self.norm1 = nn.LayerNorm(d_model)
-        self.norm2 = nn.LayerNorm(d_model)
+        self.swiglu = SwiGLU(beta)
+        self.norm1 = RMSNorm(d_model)
+        self.norm2 = RMSNorm(d_model)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
 
@@ -18,7 +61,7 @@ class PrenormTransformerEncoderLayer(nn.Module):
         src = src + self.dropout1(src2)
 
         src2 = self.norm2(src)
-        src2 = self.linear2(torch.relu(self.linear1(src2)))
+        src2 = self.swiglu(src2)
         src = src + self.dropout2(src2)
 
         return src
@@ -66,7 +109,7 @@ class BaseModel(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.transformer_encoder = PrenormTransformerEncoder(
             PrenormTransformerEncoderLayer(d_model, nhead), num_layers)
-        self.norm = nn.LayerNorm()
+        self.norm = RMSNorm(d_model)
         self.linear = nn.Linear(d_model, vocab_size)
 
     def forward(self, x, lengths):
