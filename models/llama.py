@@ -49,7 +49,7 @@ class PrenormTransformerEncoderLayer(nn.Module):
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1, beta=1.0):
         super(PrenormTransformerEncoderLayer, self).__init__()
         self.self_attn = nn.MultiheadAttention(d_model, nhead, batch_first=True)
-        self.swiglu = SwiGLU(beta)
+        self.swiglu = SwiGLU(d_model, d_model, beta)
         self.norm1 = RMSNorm(d_model)
         self.norm2 = RMSNorm(d_model)
         self.dropout1 = nn.Dropout(dropout)
