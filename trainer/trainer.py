@@ -99,7 +99,7 @@ class Trainer():
     def log_predictions(self, num):
         inputs, _ = next(iter(self.val_dataloader))
         inputs = inputs[:num, :7].to(self.device)
-        argmax_text = self.tokenizer.decode(generate_argmax(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=16).cpu().numpy().tolist())
+        argmax_text = self.tokenizer.decode(generate_argmax(self.model, self.tokenizer, self.device, num, prefix=inputs, max_len=32).cpu().numpy().tolist())
         data = {'Texts': argmax_text}
         df = pd.DataFrame(data)
         wandb.log({"Argamx Texts": wandb.Table(dataframe=df)})
